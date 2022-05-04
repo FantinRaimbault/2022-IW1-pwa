@@ -1,8 +1,5 @@
 import { html } from 'lit';
 import { Base } from '../Base';
-import { addProductToCart, deleteProductToCart } from '../api/products';
-import { resetRessources, setRessource, unsetRessource } from '../idbHelpers';
-
 export class ProductCardCart extends Base {
     constructor() {
         super();
@@ -16,7 +13,9 @@ export class ProductCardCart extends Base {
         return {
             product: { type: Object },
             loaded: { type: Boolean, state: true },
-            removeProduct: Function
+            removeProduct: Function,
+            decrProduct: Function,
+            incrProduct: Function
         };
     }
 
@@ -42,26 +41,12 @@ export class ProductCardCart extends Base {
           <p>${this.product.description}</p>
         </main>
       </a>
-      <button @click="${this._removeProduct}">Remove product from cart</button>
-      <button @click="${this._incrementProduct}">Increment amount</button>
-      <button @click="${this._decrementProduct}">Decrement amount</button>
-      <span>${this.product.amount}</span>
+      <button @click="${() => this.removeProduct(this.product)}">Remove product from cart</button>
+      <button @click="${() => this.incrProduct(this.product)}"> Add + </button>
+        <button @click="${() => this.decrProduct(this.product)}"> Less - </button>
+        <span>Amount: ${this.product.amount}</span>
     </div>
     `;
-    }
-
-    _removeProduct(e) {
-        return unsetRessource(this.product.id, 'Cart')
-            .then(() => deleteProductToCart(this.product))
-    }
-
-    _incrementProduct(e) {
-        return setRessource({ ...this.product, amount: (this.product.amount || 0) + 1 }, 'Cart').then(() => addProductToCart(this.product));
-    }
-
-    _decrementProduct(e) {
-        return setRessource({ ...this.product, amount: !this.product.amount ? 0 : this.product.amount - 1 }, 'Cart')
-            .then(() => addProductToCart(this.product));
     }
 }
 customElements.define('product-card-cart', ProductCardCart);

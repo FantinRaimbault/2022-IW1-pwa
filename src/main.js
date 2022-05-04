@@ -17,20 +17,20 @@ import { getRessource, getRessources, setRessource, setRessources } from "./idbH
     });
 
     let NETWORK_STATE = true;
-    let HAS_BEEN_OFFILINE = false;
+    let HAS_BEEN_OFFLINE = false;
 
     document.addEventListener('connection-changed', async ({ detail }) => {
         NETWORK_STATE = detail;
         if (NETWORK_STATE) {
             document.documentElement.style.setProperty('--app-bg-color', 'royalblue');
-            if (HAS_BEEN_OFFILINE) {
+            if (HAS_BEEN_OFFLINE) {
                 const storedProducts = await getRessources('Cart');
                 await setProductsToCart(storedProducts);
-                HAS_BEEN_OFFILINE = false;
+                HAS_BEEN_OFFLINE = false;
             }
         } else {
             document.documentElement.style.setProperty('--app-bg-color', '#717276');
-            HAS_BEEN_OFFILINE = true
+            HAS_BEEN_OFFLINE = true
         }
     });
 
@@ -54,7 +54,7 @@ import { getRessource, getRessources, setRessource, setRessources } from "./idbH
             const products = await getProducts();
             storedproducts = await setRessources(products);
         } else {
-            storedproducts = await getRessources('Cart');
+            storedproducts = await getRessources();
         }
 
         AppHome.products = storedproducts;
@@ -83,20 +83,19 @@ import { getRessource, getRessources, setRessource, setRessources } from "./idbH
     page('/cart', async () => {
         await import('./views/app-cart');
 
-        // let storedProducts = [];
+        let storedProducts = [];
 
-        // if (NETWORK_STATE) {
-        //     const products = [await getCartProducts()].flat().filter((item) => Object.keys(item).length > 0);
-        //     storedProducts = await setRessources(products, 'Cart');
-        // } else {
-        //     storedProducts = await getRessources('Cart');
-        // }
+        if (NETWORK_STATE) {
+            const products = await getCartProducts()
+            storedProducts = await setRessources(products, 'Cart');
+        } else {
+            storedProducts = await getRessources('Cart');
+        }
 
-        AppCart.products = []
+        AppCart.products = storedProducts
         AppCart.active = true
         skeleton.setAttribute('hidden', 'hiddle');
     });
-
 
     page();
 

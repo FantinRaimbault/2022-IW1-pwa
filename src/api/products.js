@@ -15,12 +15,9 @@ export function getProduct(productid) {
 }
 
 export async function addProductToCart(product) {
-    const cart = [await getCartProducts()].flat().filter((item) => Object.keys(item).length > 0);
-    if(cart.find((item) => item.id === product.id)) {
-        return;
-    }
-    cart.push(product);
-    return request.post(`/cart`, cart)
+    const cart = await getCartProducts();
+    const newCart = [...cart.filter(item => item.id !== product.id), product];
+    return request.post(`/cart`, newCart)
         .then(({ data }) => data)
         .catch(console.error);
 }
@@ -42,34 +39,14 @@ export async function setProductsToCart(products) {
 
 export function getCartProducts() {
     return request.get("/cart")
-        .then(({ data }) => data)
+        .then(({ data }) => {
+            return data
+        })
         .catch(console.error);
 }
 
 export function resetCart() {
     return request.post(`/cart`, [])
-        .then(({ data }) => data)
-        .catch(console.error);
-}
-
-export async function incrementAmount(product) {
-    const cart = [await getCartProducts()].flat().filter((item) => Object.keys(item).length > 0);
-    const foundedProduct = cart.find((item) => item.id === product.id);
-    if (foundedProduct) {
-        foundedProduct.amount = foundedProduct.amount + 1;
-    }
-    return request.post(`/cart`, cart)
-        .then(({ data }) => data)
-        .catch(console.error);
-}
-
-export async function decrementAmount(product) {
-    const cart = [await getCartProducts()].flat().filter((item) => Object.keys(item).length > 0);
-    const foundedProduct = cart.find((item) => item.id === product.id);
-    if (foundedProduct) {
-        foundedProduct.amount = foundedProduct.amount > 0 ? foundedProduct.amount - 1 : 0;
-    }
-    return request.post(`/cart`, cart)
         .then(({ data }) => data)
         .catch(console.error);
 }

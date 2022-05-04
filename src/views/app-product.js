@@ -1,29 +1,31 @@
 import { html } from "lit";
+import { addProductToCart } from '../api/products';
 import { Base } from '../Base';
+import { setRessource } from '../idbHelpers';
 
 export class AppProduct extends Base {
-  constructor() {
-    super();
-    this.product = {};
+    constructor() {
+        super();
+        this.product = {};
 
-    this.loaded = false;
-  }
-  static get properties() {
-    return {
-      product: { type: Object },
-      loaded: { type: Boolean, state: true }
-    };
-  }
+        this.loaded = false;
+    }
+    static get properties() {
+        return {
+            product: { type: Object },
+            loaded: { type: Boolean, state: true }
+        };
+    }
 
-  firstUpdated() {
-    const img = this.querySelector('img');
-    img.addEventListener('load', () => {
-      this.loaded = true;
-    });
-  }
+    firstUpdated() {
+        const img = this.querySelector('img');
+        img.addEventListener('load', () => {
+            this.loaded = true;
+        });
+    }
 
-  render() {
-    return html`
+    render() {
+        return html`
       <section class="product">
         <header>
           <figure>
@@ -40,9 +42,15 @@ export class AppProduct extends Base {
         <main>
           <h1>${this.product.title}</h1>
           <p>${this.product.description}</p>
+          <button @click="${this._addProduct}">Add to cart</button>
         </main>
       </section>
     `;
-  }
+    }
+
+    _addProduct(e) {
+        this.product.amount = (this.product.amount || 0) + 1
+        return setRessource({ ...this.product }, 'Cart').then(() => addProductToCart(this.product));
+    }
 }
 customElements.define('app-product', AppProduct);
