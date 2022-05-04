@@ -49,6 +49,7 @@ export class AppProduct extends Base {
     }
 
     _addProduct(e) {
+        // if you spam the button, the amount will be increased
         this.product.amount = (this.product.amount || 0) + 1
         return setRessource({ ...this.product }, 'Cart').then(() => addProductToCart(this.product));
     }
