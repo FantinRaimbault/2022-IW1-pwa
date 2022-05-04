@@ -1,5 +1,7 @@
 import { html } from 'lit';
 import { Base } from '../Base';
+import { addProductToCart } from '../api/products';
+import { setRessource } from '../idbHelpers';
 
 export class ProductCard extends Base {
   constructor() {
@@ -26,7 +28,8 @@ export class ProductCard extends Base {
 
   render() {
     return html`
-      <a href="/product/${this.product.id}" class="card">
+    <div>
+    <a href="/product/${this.product.id}" class="card">
         <header>
           <figure>
             <div class="placeholder ${this.loaded ? "fade": ""}" style="background-image: url(http://localhost:9000/image/24/${this.product.image})"></div>
@@ -38,7 +41,13 @@ export class ProductCard extends Base {
           <p>${this.product.description}</p>
         </main>
       </a>
+      <button @click="${this._addProduct}">Add to cart</button>
+    </div>
     `;
+  }
+
+  _addProduct(e) {
+      return setRessource(this.product, 'Cart').then(() => addProductToCart(this.product));
   }
 }
 customElements.define('product-card', ProductCard);

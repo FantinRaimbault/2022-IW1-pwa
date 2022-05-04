@@ -104,13 +104,15 @@
 <noscript><link rel="stylesheet" href="./src/assets/css/product.css"></noscript>
 <body>
   <section id="app">
-    <header>
+    <header style="display: flex; flex-direction: column">
       <h1><a href="/">Nozama shop 🛍</a></h1>
+      <h3><a href="/cart">Cart</a></h3>
     </header>
     <main>
 
       <app-home page></app-home>
       <app-product page></app-product>
+      <app-cart page></app-cart>
 
       <div class="skeleton">
         <div class="hero"></div>
